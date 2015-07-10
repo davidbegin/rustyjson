@@ -1,4 +1,4 @@
-#![allow(unused_mut, unused_imports, unused_variables)]
+#![allow(unused_mut, unused_imports, unused_variables, dead_code)]
 
 extern crate rustc_serialize;
 extern crate type_printer;
@@ -33,26 +33,17 @@ fn main() {
     };
 
     let mut s = String::new();
+    let file_to_string_result = file.read_to_string(&mut s);
 
-    match file.read_to_string(&mut s) {
-        Ok(_) => print!("{} contains:\n{}", display, s),
-        Err(why) => panic!(
-            "couldn't read {}: {}", display,
-            Error::description(&why)
-        ),
+    match file_to_string_result {
+        Ok(file) => {
+            println!("File to String");
+        },
+        Err(e) => {
+            println!("Error!");
+        }
     }
 
-    // ==========================================
-
-    let user = User {
-      name: "Frank Stella".to_string(),
-      email: "frankstella@aol.com".to_string(),
-      age: 79,
-    };
-
-    let encoded = json::encode(&user).unwrap();
-    println!("{:?}", encoded);
-
-    let decoded: User = json::decode(&encoded).unwrap();
+    let decoded: User = json::decode(&s).unwrap();
     println!("{:?}", decoded);
 }
