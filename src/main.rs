@@ -46,4 +46,7 @@ fn main() {
 
     let decoded: User = json::decode(&s).unwrap();
     println!("{:?}", decoded);
+
+    let encoded = json::encode(&decoded).unwrap();
+    println!("{:?}", encoded);
 }
