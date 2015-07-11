@@ -7,6 +7,7 @@ use std::io::prelude::*;
 use std::fs::File;
 use std::path::Path;
 use std::error::Error;
+use std::fs::OpenOptions;
 
 #[derive(RustcDecodable, RustcEncodable, Debug)]
 pub struct User {
@@ -19,6 +20,33 @@ fn main() {
     println!("\nRust JSON and You");
     println!("=================\n");
 
+    // reading_from_file();
+    writing_to_file();
+}
+
+fn writing_to_file() {
+    let path = Path::new("src/new_user.json");
+
+    let mut options = OpenOptions::new();
+    options.write(true);
+
+    let file = options.open(path);
+    type_printer::print_type_of(&file);
+
+    match file {
+      Ok(file) => {
+        println!("opened a file!");
+      },
+      Err(e) => {
+        println!("error opening file: {:?}", e);
+      }
+    }
+
+    // let file: Result<File, Error> = options.open(path);
+
+}
+
+fn reading_from_file() {
     let path = Path::new("src/user.json");
     let display = path.display();
 
