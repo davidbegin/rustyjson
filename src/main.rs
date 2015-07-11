@@ -8,6 +8,7 @@ use std::fs::File;
 use std::path::Path;
 use std::error::Error;
 use std::fs::OpenOptions;
+use std::io::BufWriter;
 
 #[derive(RustcDecodable, RustcEncodable, Debug)]
 pub struct User {
@@ -31,19 +32,14 @@ fn writing_to_file() {
     options.write(true);
 
     let file = options.open(path);
-    type_printer::print_type_of(&file);
 
-    match file {
-      Ok(file) => {
-        println!("opened a file!");
-      },
-      Err(e) => {
-        println!("error opening file: {:?}", e);
-      }
-    }
+    let file = match options.open(&path) {
+        Ok(file) => file,
+        Err(..) => panic!("Error opening file"),
+    };
 
-    // let file: Result<File, Error> = options.open(path);
-
+    let mut writer = BufWriter::new(&file);
+    writer.write_all(b"this will json one day\n");
 }
 
 fn reading_from_file() {
