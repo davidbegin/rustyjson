@@ -1,4 +1,5 @@
-#![allow(unused_mut, unused_imports, unused_variables, dead_code)]
+#![allow(unused_mut, unused_imports, unused_variables, dead_code, unused_must_use)]
+#![feature(collections)]
 
 extern crate rustc_serialize;
 extern crate type_printer;
@@ -14,7 +15,7 @@ use std::io::BufWriter;
 pub struct User {
     name: String,
     email: String,
-    age: u8,
+    age: u32,
 }
 
 fn main() {
@@ -22,7 +23,42 @@ fn main() {
     println!("=================\n");
 
     // reading_from_file();
-    writing_to_file();
+    // writing_to_file();
+
+    let user = User {
+        name: "Heraclitus".to_string(),
+        email: "heraclitus@aol.com".to_string(),
+        age: 2550
+    };
+
+    write_user_to_file(user);
+}
+
+fn write_user_to_file(user: User) {
+    let json_user: String = encode_user_to_json(&user);
+    let path = Path::new("src/new_user.json");
+
+    let mut options = OpenOptions::new();
+    options.write(true);
+
+    let file = options.open(path);
+
+    let file = match options.open(&path) {
+        Ok(file) => file,
+        Err(..) => panic!("Error opening file"),
+    };
+
+    let mut writer = BufWriter::new(&file);
+    let json_as_bytes  = json_user.into_bytes();
+    let mut dst_array = [0; 61];
+    let slice = dst_array.clone_from_slice(&json_as_bytes);
+
+    writer.write_all(&dst_array);
+}
+
+fn encode_user_to_json(user: &User) -> String {
+    let encoded: String= json::encode(user).unwrap();
+    encoded
 }
 
 fn writing_to_file() {
@@ -69,8 +105,8 @@ fn reading_from_file() {
     }
 
     let decoded: User = json::decode(&s).unwrap();
-    println!("{:?}", decoded);
+    // println!("{:?}", decoded);
 
     let encoded = json::encode(&decoded).unwrap();
-    println!("{:?}", encoded);
+    // println!("{:?}", encoded);
 }
