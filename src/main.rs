@@ -31,7 +31,23 @@ fn main() {
         age: 2550
     };
 
-    write_user_to_file(user);
+    // write_user_to_file(user);
+    write_user_to_file2(&user);
+}
+
+fn write_user_to_file2(user: &User) {
+    let json_user: String = encode_user_to_json(user);
+    let path = Path::new("src/new_user.json");
+
+    let mut options = OpenOptions::new();
+    options.write(true);
+
+    let mut file = match options.open(path) {
+      Ok(file) => file,
+      Err(..) => panic!("Error opening file!"),
+    };
+
+    file.write(json_user.as_bytes());
 }
 
 fn write_user_to_file(user: User) {
@@ -48,9 +64,15 @@ fn write_user_to_file(user: User) {
         Err(..) => panic!("Error opening file"),
     };
 
+    // I think I can use a buf writer without knowing the exact size,
+    // of my dst_array
     let mut writer = BufWriter::new(&file);
     let json_as_bytes  = json_user.into_bytes();
-    let mut dst_array = [0; 61];
+
+    // let dst_array_length = json_as_bytes.len() - 1;
+    // let box_array = Box::new([0; dst_array_length]);
+
+    let mut dst_array = [0; 60];
     let slice = dst_array.clone_from_slice(&json_as_bytes);
 
     writer.write_all(&dst_array);
