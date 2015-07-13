@@ -16,26 +16,61 @@ pub struct User {
     name: String,
     email: String,
     age: u32,
+    city_id: i32,
+}
+
+#[derive(RustcDecodable, RustcEncodable, Debug)]
+pub struct City {
+    name: String,
+    id: i32,
 }
 
 fn main() {
     println!("\nRust JSON and You");
     println!("=================\n");
 
+    let ephesus = City {
+        name: "Ephesus".to_string(),
+        id: 1,
+    };
+
+    let sinop = City {
+        name: "Sinop".to_string(),
+        id: 2,
+    };
+
     let hera = User {
         name: "Heraclitus".to_string(),
         email: "heraclitus@aol.com".to_string(),
-        age: 2550
+        age: 2550,
+        city_id: 1,
     };
 
     let dio = User {
         name: "Diogenes".to_string(),
         email: "diogenes@aol.com".to_string(),
-        age: 2427
+        age: 2427,
+        city_id: 2,
+
     };
 
-    write_user_to_file(&hera);
-    write_user_to_file(&dio);
+    // I should figure out how to have this append to be valid json
+    // write_user_to_file(&hera);
+    // write_user_to_file(&dio);
+
+    let users = vec![hera, dio];
+    let cities = vec![ephesus, sinop];
+    blender(users, cities);
+}
+
+fn blender(users: Vec<User>, cities: Vec<City>) {
+    for user in users {
+      println!("User: {:?}", user);
+    }
+
+    for city in cities {
+      println!("City: {:?}", city);
+    }
 }
 
 fn write_user_to_file(user: &User) {
