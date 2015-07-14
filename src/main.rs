@@ -20,6 +20,14 @@ pub struct User {
 }
 
 #[derive(RustcDecodable, RustcEncodable, Debug)]
+pub struct UserWithOptionalCity {
+    name: String,
+    email: String,
+    age: u32,
+    city_id: Option<i32>,
+}
+
+#[derive(RustcDecodable, RustcEncodable, Debug)]
 pub struct City {
     name: String,
     id: i32,
@@ -51,7 +59,6 @@ fn main() {
         email: "diogenes@aol.com".to_string(),
         age: 2427,
         city_id: 2,
-
     };
 
     // I should figure out how to have this append to be valid json
@@ -60,7 +67,21 @@ fn main() {
 
     let users = vec![hera, dio];
     let cities = vec![ephesus, sinop];
-    blender(users, cities);
+
+    // I want to experiment with Option's for attributes for a User
+    let ax = UserWithOptionalCity {
+        name: "Anaximander".to_string(),
+        email: "anaximander@aol.com".to_string(),
+        age: 2625,
+        city_id: None,
+    };
+
+    let encoded: String = json::encode(&ax).unwrap();
+    println!("Encoded User with Optional City: {:?}", encoded);
+    // and Json encoded handles it perfectly!
+
+    // Zip into a User with City information
+    // blender(users, cities);
 }
 
 fn blender(users: Vec<User>, cities: Vec<City>) {
@@ -90,7 +111,7 @@ fn write_user_to_file(user: &User) {
 }
 
 fn encode_user_to_json(user: &User) -> String {
-    let encoded: String= json::encode(user).unwrap();
+    let encoded: String = json::encode(user).unwrap();
     encoded
 }
 
