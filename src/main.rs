@@ -33,6 +33,14 @@ pub struct City {
     id: i32,
 }
 
+#[derive(RustcDecodable, RustcEncodable, Debug)]
+pub struct SerializedUser {
+    name: String,
+    email: String,
+    age: u32,
+    city_name: String
+}
+
 fn main() {
     println!("\nRust JSON and You");
     println!("=================\n");
@@ -76,21 +84,33 @@ fn main() {
         city_id: None,
     };
 
-    let encoded: String = json::encode(&ax).unwrap();
-    println!("Encoded User with Optional City: {:?}", encoded);
+    // let encoded: String = json::encode(&ax).unwrap();
+    // println!("Encoded User with Optional City: {:?}", encoded);
     // and Json encoded handles it perfectly!
 
     // Zip into a User with City information
-    // blender(users, cities);
+    blender(users, cities);
 }
 
 fn blender(users: Vec<User>, cities: Vec<City>) {
-    for user in users {
-      println!("User: {:?}", user);
-    }
+    let serialized_users = users.iter().map( |user| {
+      let city = cities.iter()
+        .find(|city| city.id == user.city_id)
+        .unwrap();
 
-    for city in cities {
-      println!("City: {:?}", city);
+      let serialized_user = SerializedUser {
+        name: user.name.clone(),
+        age: user.age.clone(),
+        email: user.email.clone(),
+        city_name: city.name.clone(),
+      };
+
+      serialized_user
+    });
+
+    for user in serialized_users {
+      let encoded: String = json::encode(&user).unwrap();
+      println!("{:?}", encoded);
     }
 }
 
