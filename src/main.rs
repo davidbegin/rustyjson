@@ -76,7 +76,6 @@ fn main() {
     let users = vec![hera, dio];
     let cities = vec![ephesus, sinop];
 
-    // I want to experiment with Option's for attributes for a User
     let ax = UserWithOptionalCity {
         name: "Anaximander".to_string(),
         email: "anaximander@aol.com".to_string(),
@@ -84,15 +83,12 @@ fn main() {
         city_id: None,
     };
 
-    // let encoded: String = json::encode(&ax).unwrap();
-    // println!("Encoded User with Optional City: {:?}", encoded);
-    // and Json encoded handles it perfectly!
-
-    // Zip into a User with City information
-    blender(users, cities);
+    let result: Vec<SerializedUser> = blender(users, cities);
+    let encoded: String = json::encode(&result).unwrap();
+    println!("{:?}", encoded);
 }
 
-fn blender(users: Vec<User>, cities: Vec<City>) {
+fn blender(users: Vec<User>, cities: Vec<City>) ->Vec<SerializedUser> {
     let serialized_users = users.iter().map( |user| {
       let city = cities.iter()
         .find(|city| city.id == user.city_id)
@@ -108,10 +104,13 @@ fn blender(users: Vec<User>, cities: Vec<City>) {
       serialized_user
     });
 
+    let mut results: Vec<SerializedUser> = vec![];
+
     for user in serialized_users {
-      let encoded: String = json::encode(&user).unwrap();
-      println!("{:?}", encoded);
+      results.push(user);
     }
+
+    results
 }
 
 fn write_user_to_file(user: &User) {
