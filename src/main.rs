@@ -41,6 +41,13 @@ pub struct SerializedUser {
     city_name: String
 }
 
+pub struct BorrowedSerializedUser<'a> {
+    name: &'a String,
+    email: &'a String,
+    age: &'a u32,
+    city_name: &'a String
+}
+
 fn main() {
     println!("\nRust JSON and You");
     println!("=================\n");
@@ -83,11 +90,35 @@ fn main() {
         city_id: None,
     };
 
-    let result: Vec<SerializedUser> = blender(users, cities);
+
+    // let result: Vec<SerializedUser> = blender(users, cities);
+    // let encoded: String = json::encode(&result).unwrap();
+    // println!("{:?}", encoded);
+
+    let result: Vec<SerializedUser> = blender2(&users, &cities);
     let encoded: String = json::encode(&result).unwrap();
     println!("{:?}", encoded);
 }
 
+fn blender2<'a>(users: &Vec<User>, cities: &Vec<City>) ->Vec<BorrowedSerializedUser, 'a> {
+    users.iter().map( |user| {
+      let city = cities.iter()
+        .find(|city| city.id == user.city_id)
+        .unwrap();
+
+      let serialized_user = BorrowedSerializedUser {
+        name: &user.name,
+        age: &user.age,
+        email: &user.email,
+        city_name: &city.name
+      };
+
+      serialized_user
+    }).collect::<Vec<BorrowedSerializedUser>>()
+}
+
+// How can I create a blender that doesn't clone?
+// should the User vec passed in be borrowed?
 fn blender(users: Vec<User>, cities: Vec<City>) ->Vec<SerializedUser> {
     users.iter().map( |user| {
       let city = cities.iter()
