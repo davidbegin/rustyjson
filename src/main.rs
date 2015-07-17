@@ -89,7 +89,7 @@ fn main() {
 }
 
 fn blender(users: Vec<User>, cities: Vec<City>) ->Vec<SerializedUser> {
-    let serialized_users = users.iter().map( |user| {
+    users.iter().map( |user| {
       let city = cities.iter()
         .find(|city| city.id == user.city_id)
         .unwrap();
@@ -102,15 +102,7 @@ fn blender(users: Vec<User>, cities: Vec<City>) ->Vec<SerializedUser> {
       };
 
       serialized_user
-    });
-
-    let mut results: Vec<SerializedUser> = vec![];
-
-    for user in serialized_users {
-      results.push(user);
-    }
-
-    results
+    }).collect::<Vec<SerializedUser>>()
 }
 
 fn write_user_to_file(user: &User) {
